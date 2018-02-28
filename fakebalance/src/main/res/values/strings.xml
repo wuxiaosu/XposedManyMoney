@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">好多钱</string>
+    <string name="app_description">假装自己有好多钱</string>
+
+    <string name="pre_key_hide_icon">hide_icon</string>
+    <string name="pre_key_fake_wechat">fake_wechat</string>
+    <string name="pre_key_wechat">wechat</string>
+    <string name="pre_key_fake_tenpay">fake_tenpay</string>
+    <string name="pre_key_tenpay">tenpay</string>
+    <string name="pre_key_fake_alipay">fake_alipay</string>
+    <string name="pre_key_alipay">alipay</string>
+
+    <string name="action_about">关于</string>
+
+</resources>

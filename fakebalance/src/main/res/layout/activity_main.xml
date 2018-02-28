@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey">
+
+    <include layout="@layout/toolbar_common" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/toolbar_height">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/default_margin">
+
+            <com.wuxiaosu.widget.SettingLabelView
+                android:id="@+id/slv_hide_icon"
+                style="@style/SettingLayout"
+                app:preferences_key="@string/pre_key_hide_icon"
+                app:label_text="隐藏图标" />
+
+            <com.wuxiaosu.widget.SettingLabelView
+                style="@style/SettingLayout"
+                app:contact_view="@id/ll_wechat"
+                app:label_text="微信零钱修改"
+                app:preferences_key="@string/pre_key_fake_wechat" />
+
+            <RelativeLayout
+                android:id="@+id/ll_wechat"
+                style="@style/MoneyLayout">
+
+                <EditText
+                    android:id="@+id/et_wechat"
+                    style="@style/MoneyEditText" />
+            </RelativeLayout>
+
+
+            <com.wuxiaosu.widget.SettingLabelView
+                style="@style/SettingLayout"
+                app:contact_view="@id/ll_tenpay"
+                app:label_text="QQ钱包余额修改"
+                app:preferences_key="@string/pre_key_fake_tenpay" />
+
+            <RelativeLayout
+                android:id="@+id/ll_tenpay"
+                style="@style/MoneyLayout">
+
+                <EditText
+                    android:id="@+id/et_tenpay"
+                    style="@style/MoneyEditText" />
+            </RelativeLayout>
+
+            <com.wuxiaosu.widget.SettingLabelView
+                style="@style/SettingLayout"
+                app:contact_view="@id/ll_alipay"
+                app:label_text="支付宝余额修改"
+                app:preferences_key="@string/pre_key_fake_alipay" />
+
+            <RelativeLayout
+                android:id="@+id/ll_alipay"
+                style="@style/MoneyLayout">
+
+                <EditText
+                    android:id="@+id/et_alipay"
+                    style="@style/MoneyEditText" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
+
