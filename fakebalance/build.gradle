@@ -7,14 +7,28 @@ android {
         applicationId "com.wuxiaosu.fakebalance"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-
+        versionCode 2
+        versionName "1.01"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def oldFile = output.outputFile
+                    def newName = oldFile.name
+                    if (variant.buildType.name == 'release') {
+                        newName = oldFile.name.replace(".", "-v" + variant.versionName + '.')
+                    }
+                    outputFileName = newName
+                }
+            }
+        }
+        debug {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

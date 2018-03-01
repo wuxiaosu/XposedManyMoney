@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.TextView;
 
 import com.wuxiaosu.fakebalance.hook.AliPayHook;
 import com.wuxiaosu.fakebalance.hook.TimHook;

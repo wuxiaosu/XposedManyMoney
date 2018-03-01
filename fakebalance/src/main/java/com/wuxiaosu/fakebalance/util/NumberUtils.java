@@ -28,11 +28,11 @@ public class NumberUtils {
      * @return
      */
     public static String num2num00WithComma(String number) {
-        String temp = num2num00(number);
-        if (temp.equals("0.00")) {
-            return temp;
-        }
         DecimalFormat df = new DecimalFormat("#,###.00");
-        return df.format(Double.valueOf(temp));
+        String result = df.format(Double.valueOf(num2num00(number)));
+        if (result.startsWith(".")) {
+            result = "0" + result;
+        }
+        return result;
     }
 }
