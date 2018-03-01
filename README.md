@@ -6,7 +6,9 @@ Xposed 修改微信、TIM、支付宝余额，假装自己很有钱，如图所�
 ![02.png](https://raw.githubusercontent.com/wuxiaosu/XposedManyMoney/master/screenshots/02.png)
 ![03.png](https://raw.githubusercontent.com/wuxiaosu/XposedManyMoney/master/screenshots/03.png)
 ## 下载
-- release from [github](https://github.com/wuxiaosu/XposedManyMoney/releases) [v1.0](https://github.com/wuxiaosu/XposedManyMoney/releases/tag/v1.0) 
+- release from [github](https://github.com/wuxiaosu/XposedManyMoney/releases) [v1.01](https://github.com/wuxiaosu/XposedManyMoney/releases/tag/v1.01) 
+## v1.01  
+修复支付宝金额格式化错误
 ## v1.0  
 支持：  
 微信 "6.6.0", "6.6.1", "6.6.2", "6.6.3"  
