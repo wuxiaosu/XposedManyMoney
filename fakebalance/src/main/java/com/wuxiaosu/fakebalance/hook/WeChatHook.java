@@ -55,13 +55,20 @@ public class WeChatHook {
                 walletBalanceManagerUIMethodName = "au";
                 walletBalanceManagerUIFiledName = "szP";
                 break;
-            default:
             case "6.6.3":
                 mallIndexUIMethodName = "aYm";
                 mallIndexUIFiledName = "olV";
 
                 walletBalanceManagerUIMethodName = "au";
                 walletBalanceManagerUIFiledName = "szP";
+                break;
+            default:
+            case "6.6.5":
+                mallIndexUIMethodName = "aYS";
+                mallIndexUIFiledName = "orA";
+
+                walletBalanceManagerUIMethodName = "av";
+                walletBalanceManagerUIFiledName = "sFT";
                 break;
         }
     }

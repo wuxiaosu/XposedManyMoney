@@ -29,11 +29,11 @@ import java.util.Arrays;
 public class MainActivity extends BaseActivity {
 
     private final String[] wechatSupportVersions =
-            new String[]{"6.6.0", "6.6.1", "6.6.2", "6.6.3"};
+            new String[]{"6.6.0", "6.6.1", "6.6.2", "6.6.3", "6.6.5"};
     private final String[] timSupportVersions =
             new String[]{"2.0.0", "2.0.1", "2.0.5", "2.1.0", "2.1.5"};
     private final String[] alipaySupportVersions =
-            new String[]{"10.1.0", "10.1.2", "10.1.5", "10.1.8", "10.1.10", "10.1.12", "10.1.15"};
+            new String[]{"10.1.0", "10.1.2", "10.1.5", "10.1.8", "10.1.10", "10.1.12", "10.1.15", "10.1.18"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
