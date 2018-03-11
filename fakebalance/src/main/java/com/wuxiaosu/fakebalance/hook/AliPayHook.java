@@ -1,5 +1,6 @@
 package com.wuxiaosu.fakebalance.hook;
 
+import android.util.Log;
 
 import com.wuxiaosu.fakebalance.BuildConfig;
 import com.wuxiaosu.fakebalance.util.NumberUtils;
@@ -43,8 +44,6 @@ public class AliPayHook {
             case "10.1.12":
                 break;
             case "10.1.15":
-                break;
-            case "10.1.18":
                 break;
         }
     }

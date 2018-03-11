@@ -19,9 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class com.wuxiaosu.fakebalance.Main {
-    public void handleLoadPackage(...);
-}
--keep class com.wuxiaosu.fakebalance.MainActivity {
-    private static boolean isModuleActive(...);
-}
+-keep class com.wuxiaosu.fakebalance.Main { *; }
+-keep class com.wuxiaosu.fakebalance.MainActivity { *; }
