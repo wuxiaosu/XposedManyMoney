@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import com.wuxiaosu.fakebalance.hook.AliPayHook;
+import com.wuxiaosu.fakebalance.hook.QQHook;
+import com.wuxiaosu.fakebalance.hook.QQPluginHook;
 import com.wuxiaosu.fakebalance.hook.TimHook;
 import com.wuxiaosu.fakebalance.hook.WeChatHook;
 
@@ -29,10 +31,12 @@ public class Main implements IXposedHookLoadPackage {
 
     private static final String ALIPAY_PKG_NAME = "com.eg.android.AlipayGphone";
     private static final String TIM_PKG_NAME = "com.tencent.tim";
+    private static final String QQ_PKG_NAME = "com.tencent.mobileqq";
     private static final String WECHAT_PKG_NAME = "com.tencent.mm";
 
     private String alipayVersionName;
     private String timVersionName;
+    private String qqVersionName;
     private String wechatVersionName;
 
     private static List<String> pkgList = new ArrayList<>();
@@ -41,6 +45,7 @@ public class Main implements IXposedHookLoadPackage {
         pkgList.add(ALIPAY_PKG_NAME);
         pkgList.add(TIM_PKG_NAME);
         pkgList.add(WECHAT_PKG_NAME);
+        pkgList.add(QQ_PKG_NAME);
     }
 
     @Override
@@ -70,15 +75,21 @@ public class Main implements IXposedHookLoadPackage {
 
                             initVersionName(context);
 
-                            if (packageName.endsWith(ALIPAY_PKG_NAME)) {
-                                new AliPayHook(alipayVersionName).hook(appClassLoader);
-                            } else if (packageName.endsWith(WECHAT_PKG_NAME)) {
-                                new WeChatHook(wechatVersionName).hook(appClassLoader);
+                            switch (packageName) {
+                                case ALIPAY_PKG_NAME:
+                                    new AliPayHook(alipayVersionName).hook(appClassLoader);
+                                    break;
+                                case WECHAT_PKG_NAME:
+                                    new WeChatHook(wechatVersionName).hook(appClassLoader);
+                                    break;
+                                case QQ_PKG_NAME:
+                                    new QQHook(qqVersionName).hook(appClassLoader);
+                                    break;
                             }
                         }
                     });
 
-            if (packageName.equals(TIM_PKG_NAME)) {
+            if (packageName.equals(TIM_PKG_NAME) || packageName.equals(QQ_PKG_NAME)) {
                 XposedHelpers.findAndHookConstructor("dalvik.system.BaseDexClassLoader",
                         lpparam.classLoader, String.class, File.class, String.class, ClassLoader.class, new XC_MethodHook() {
                             @Override
@@ -86,7 +97,11 @@ public class Main implements IXposedHookLoadPackage {
 
                                 if (param.args[0].toString().contains("qwallet_plugin.apk")) {
                                     ClassLoader classLoader = (BaseDexClassLoader) param.thisObject;
-                                    new TimHook(timVersionName).hook(classLoader);
+                                    if (packageName.equals(TIM_PKG_NAME)) {
+                                        new TimHook(timVersionName).hook(classLoader);
+                                    } else {
+                                        new QQPluginHook(qqVersionName).hook(classLoader);
+                                    }
                                 }
                             }
                         });
@@ -98,6 +113,7 @@ public class Main implements IXposedHookLoadPackage {
         alipayVersionName = getVersionName(context, ALIPAY_PKG_NAME);
         timVersionName = getVersionName(context, TIM_PKG_NAME);
         wechatVersionName = getVersionName(context, WECHAT_PKG_NAME);
+        qqVersionName = getVersionName(context, QQ_PKG_NAME);
     }
 
     private String getVersionName(Context context, String pkgName) {
