@@ -46,6 +46,8 @@ public class AliPayHook {
                 break;
             case "10.1.18":
                 break;
+            case "10.1.20":
+                break;
         }
     }
 

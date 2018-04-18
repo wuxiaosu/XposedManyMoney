@@ -23,9 +23,20 @@ public class QQPluginHook {
     private static boolean fakeBalance;
     private static String balance;
 
-    private String qvipPayAccountActivityCallbackClazzName = "ddk";
+    private String qvipPayAccountActivityCallbackClazzName;
 
     public QQPluginHook(String versionName) {
+        switch (versionName) {
+            case "7.3.8":
+            case "7.5.0":
+                qvipPayAccountActivityCallbackClazzName = "ddk";
+                break;
+            default:
+            case "7.5.5":
+            case "7.5.8":
+                qvipPayAccountActivityCallbackClazzName = "ddw";
+                break;
+        }
         xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
         xsp.makeWorldReadable();
     }

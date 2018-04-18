@@ -7,8 +7,17 @@ android {
         applicationId "com.wuxiaosu.fakebalance"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 4
-        versionName "1.03"
+        versionCode 5
+        versionName "1.04"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(FAKEBALANCE_STORE_FILE)
+            storePassword FAKEBALANCE_STORE_PASSWORD
+            keyAlias FAKEBALANCE_KEY_ALIAS
+            keyPassword FAKEBALANCE_KEY_PASSWORD
+        }
     }
 
     buildTypes {
