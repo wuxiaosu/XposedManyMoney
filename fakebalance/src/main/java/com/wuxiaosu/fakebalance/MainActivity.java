@@ -24,18 +24,8 @@ import android.widget.Toast;
 import com.wuxiaosu.fakebalance.base.BaseActivity;
 import com.wuxiaosu.widget.SettingLabelView;
 
-import java.util.Arrays;
 
 public class MainActivity extends BaseActivity {
-
-    private final String[] wechatSupportVersions =
-            new String[]{"6.6.0", "6.6.1", "6.6.2", "6.6.3", "6.6.5", "6.6.6"};
-    private final String[] timSupportVersions =
-            new String[]{"2.0.0", "2.0.1", "2.0.5", "2.1.0", "2.1.5"};
-    private final String[] qqSupportVersions =
-            new String[]{"7.3.8", "7.5.0", "7.5.5", "7.5.8"};
-    private final String[] alipaySupportVersions =
-            new String[]{"10.1.0", "10.1.2", "10.1.5", "10.1.8", "10.1.10", "10.1.12", "10.1.15", "10.1.18", "10.1.20"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +46,7 @@ public class MainActivity extends BaseActivity {
         bindPreferences(R.id.et_wechat, sharedPreferences, R.string.pre_key_wechat, "0.00");
         bindPreferences(R.id.et_tenpay, sharedPreferences, R.string.pre_key_tenpay, "0.00");
         bindPreferences(R.id.et_alipay, sharedPreferences, R.string.pre_key_alipay, "0.00");
+        bindPreferences(R.id.et_alipay_tts, sharedPreferences, R.string.pre_key_alipay_tts, "5000000.00");
 
         ((SettingLabelView) findViewById(R.id.slv_hide_icon)).
                 setCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -140,11 +131,7 @@ public class MainActivity extends BaseActivity {
         });
         mTvVersionName.setText(getString(R.string.app_name) + " v" + BuildConfig.VERSION_NAME);
         mTvInfo.setText(getString(R.string.app_description)
-                + ",当前版本已支持\n微信："
-                + Arrays.toString(wechatSupportVersions)
-                + "\nQQ：" + Arrays.toString(qqSupportVersions)
-                + "\nTIM：" + Arrays.toString(timSupportVersions)
-                + "\n支付宝：" + Arrays.toString(alipaySupportVersions)
+                + "\n作者没什么想说的，就祝你们多多发财吧"
                 + "\n更多详情：");
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("关于")

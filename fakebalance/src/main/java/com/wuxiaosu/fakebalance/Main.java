@@ -34,11 +34,6 @@ public class Main implements IXposedHookLoadPackage {
     private static final String QQ_PKG_NAME = "com.tencent.mobileqq";
     private static final String WECHAT_PKG_NAME = "com.tencent.mm";
 
-    private String alipayVersionName;
-    private String timVersionName;
-    private String qqVersionName;
-    private String wechatVersionName;
-
     private static List<String> pkgList = new ArrayList<>();
 
     static {
@@ -73,18 +68,17 @@ public class Main implements IXposedHookLoadPackage {
                             Context context = (Context) param.args[0];
                             ClassLoader appClassLoader = context.getClassLoader();
 
-                            initVersionName(context);
-
                             switch (packageName) {
                                 case ALIPAY_PKG_NAME:
-                                    new AliPayHook(alipayVersionName).hook(appClassLoader);
+                                    new AliPayHook(getVersionName(context, ALIPAY_PKG_NAME)).hook(appClassLoader);
                                     break;
                                 case WECHAT_PKG_NAME:
-                                    new WeChatHook(wechatVersionName).hook(appClassLoader);
+                                    WeChatHook.hook(appClassLoader);
                                     break;
                                 case QQ_PKG_NAME:
-                                    new QQHook(qqVersionName).hook(appClassLoader);
+                                    QQHook.hook(appClassLoader);
                                     break;
+                                default:
                             }
                         }
                     });
@@ -98,9 +92,9 @@ public class Main implements IXposedHookLoadPackage {
                                 if (param.args[0].toString().contains("qwallet_plugin.apk")) {
                                     ClassLoader classLoader = (BaseDexClassLoader) param.thisObject;
                                     if (packageName.equals(TIM_PKG_NAME)) {
-                                        new TimHook(timVersionName).hook(classLoader);
+                                        TimHook.hook(classLoader);
                                     } else {
-                                        new QQPluginHook(qqVersionName).hook(classLoader);
+                                        QQPluginHook.hook(classLoader);
                                     }
                                 }
                             }
@@ -109,12 +103,6 @@ public class Main implements IXposedHookLoadPackage {
         }
     }
 
-    private void initVersionName(Context context) {
-        alipayVersionName = getVersionName(context, ALIPAY_PKG_NAME);
-        timVersionName = getVersionName(context, TIM_PKG_NAME);
-        wechatVersionName = getVersionName(context, WECHAT_PKG_NAME);
-        qqVersionName = getVersionName(context, QQ_PKG_NAME);
-    }
 
     private String getVersionName(Context context, String pkgName) {
         try {

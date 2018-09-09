@@ -21,8 +21,8 @@
             <com.wuxiaosu.widget.SettingLabelView
                 android:id="@+id/slv_hide_icon"
                 style="@style/SettingLayout"
-                app:preferences_key="@string/pre_key_hide_icon"
-                app:label_text="隐藏图标" />
+                app:label_text="隐藏图标"
+                app:preferences_key="@string/pre_key_hide_icon" />
 
             <com.wuxiaosu.widget.SettingLabelView
                 style="@style/SettingLayout"
@@ -67,6 +67,21 @@
 
                 <EditText
                     android:id="@+id/et_alipay"
+                    style="@style/MoneyEditText" />
+            </RelativeLayout>
+
+            <com.wuxiaosu.widget.SettingLabelView
+                style="@style/SettingLayout"
+                app:contact_view="@id/ll_alipay_tts"
+                app:label_text="支付宝收款语音"
+                app:preferences_key="@string/pre_key_fake_alipay_tts" />
+
+            <RelativeLayout
+                android:id="@+id/ll_alipay_tts"
+                style="@style/MoneyLayout">
+
+                <EditText
+                    android:id="@+id/et_alipay_tts"
                     style="@style/MoneyEditText" />
             </RelativeLayout>
         </LinearLayout>

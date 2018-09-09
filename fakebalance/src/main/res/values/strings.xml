@@ -9,6 +9,8 @@
     <string name="pre_key_tenpay">tenpay</string>
     <string name="pre_key_fake_alipay">fake_alipay</string>
     <string name="pre_key_alipay">alipay</string>
+    <string name="pre_key_fake_alipay_tts">fake_alipay_tts</string>
+    <string name="pre_key_alipay_tts">alipay_tts</string>
 
     <string name="action_about">关于</string>
 

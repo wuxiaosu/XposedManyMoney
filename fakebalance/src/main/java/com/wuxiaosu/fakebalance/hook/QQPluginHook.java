@@ -1,10 +1,14 @@
 package com.wuxiaosu.fakebalance.hook;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.TextView;
 
 import com.wuxiaosu.fakebalance.BuildConfig;
 import com.wuxiaosu.fakebalance.util.NumberUtils;
 import com.wuxiaosu.widget.SettingLabelView;
+
+import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -23,48 +27,83 @@ public class QQPluginHook {
     private static boolean fakeBalance;
     private static String balance;
 
-    private String qvipPayAccountActivityCallbackClazzName;
-
-    public QQPluginHook(String versionName) {
-        switch (versionName) {
-            case "7.3.8":
-            case "7.5.0":
-                qvipPayAccountActivityCallbackClazzName = "ddk";
-                break;
-            default:
-            case "7.5.5":
-            case "7.5.8":
-                qvipPayAccountActivityCallbackClazzName = "ddw";
-                break;
-        }
-        xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
-        xsp.makeWorldReadable();
-    }
-
-    private void reload() {
+    private static void reload() {
         xsp.reload();
         balance = NumberUtils.num2num00(xsp.getString("tenpay", "0.00"));
         fakeBalance = xsp.getBoolean("fake_tenpay", false);
     }
 
-    public void hook(ClassLoader classLoader) {
+    public static void hook(ClassLoader classLoader) {
+        xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
+        xsp.makeWorldReadable();
         try {
-            Class clazz = XposedHelpers.findClass(qvipPayAccountActivityCallbackClazzName, classLoader);
-            XposedBridge.hookAllMethods(clazz, "a",
-                    new XC_MethodHook() {
+            final Class qvipPayAccountActivityClazz = XposedHelpers.findClass("com.qwallet.activity.QvipPayAccountActivity", classLoader);
+            handleHook(qvipPayAccountActivityClazz);
+            Method[] methods = qvipPayAccountActivityClazz.getMethods();
+            for (Method method : methods) {
+                if (method.getParameterTypes().length == 1
+                        && method.getParameterTypes()[0] == qvipPayAccountActivityClazz
+                        && method.getReturnType() == TextView.class) {
+
+                    XposedBridge.hookAllMethods(qvipPayAccountActivityClazz, method.getName(), new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            reload();
-                            if (fakeBalance) {
-                                Object a = XposedHelpers.getObjectField(param.thisObject, "a");
-                                TextView textView = (TextView) (XposedHelpers.getObjectField(a, "ah"));
-                                textView.setText(balance);
+                            Object object = param.getResult();
+                            if (object != null && object.getClass() == TextView.class) {
+                                handleHook((TextView) object);
                             }
                             super.afterHookedMethod(param);
                         }
                     });
+                }
+            }
         } catch (Error | Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void handleHook(final Class clazz) {
+        try {
+            XposedHelpers.findAndHookMethod(clazz, "onResume", new XC_MethodHook() {
+
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    reload();
+                    super.beforeHookedMethod(param);
+                }
+            });
+        } catch (Error | Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void handleHook(final TextView textView) {
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (fakeBalance) {
+                    String string = s.toString();
+                    boolean isDouble = true;
+                    try {
+                        Double.valueOf(string);
+                    } catch (Exception e) {
+                        isDouble = false;
+                    }
+                    if (isDouble && !string.equals(balance)) {
+                        textView.setText(balance);
+                    }
+                }
+            }
+        });
     }
 }

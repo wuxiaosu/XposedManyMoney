@@ -1,10 +1,14 @@
 package com.wuxiaosu.fakebalance.hook;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.TextView;
 
 import com.wuxiaosu.fakebalance.BuildConfig;
 import com.wuxiaosu.fakebalance.util.NumberUtils;
 import com.wuxiaosu.widget.SettingLabelView;
+
+import java.lang.reflect.Field;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -24,99 +28,62 @@ public class WeChatHook {
     private static boolean fakeBalance;
     private static String balance;
 
-    private String mallIndexUIMethodName;
-    private String mallIndexUIFiledName;
-
-    private String walletBalanceManagerUIMethodName;
-    private String walletBalanceManagerUIFiledName;
-
-    public WeChatHook(String versionName) {
+    public static void hook(final ClassLoader classLoader) {
         xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
         xsp.makeWorldReadable();
-        switch (versionName) {
-            case "6.6.0":
-                mallIndexUIMethodName = "aSR";
-                mallIndexUIFiledName = "nya";
+        final Class mallIndexUIClazz =
+                XposedHelpers.findClass("com.tencent.mm.plugin.mall.ui.MallIndexUI", classLoader);
+        final Class walletBalanceManagerUIClazz =
+                XposedHelpers.findClass("com.tencent.mm.plugin.wallet.balance.ui.WalletBalanceManagerUI", classLoader);
 
-                walletBalanceManagerUIMethodName = "au";
-                walletBalanceManagerUIFiledName = "rFA";
-                break;
-            case "6.6.1":
-                mallIndexUIMethodName = "aTu";
-                mallIndexUIFiledName = "nCe";
-
-                walletBalanceManagerUIMethodName = "au";
-                walletBalanceManagerUIFiledName = "rJK";
-                break;
-            case "6.6.2":
-                mallIndexUIMethodName = "aYm";
-                mallIndexUIFiledName = "olV";
-
-                walletBalanceManagerUIMethodName = "au";
-                walletBalanceManagerUIFiledName = "szP";
-                break;
-            case "6.6.3":
-                mallIndexUIMethodName = "aYm";
-                mallIndexUIFiledName = "olV";
-
-                walletBalanceManagerUIMethodName = "au";
-                walletBalanceManagerUIFiledName = "szP";
-                break;
-            case "6.6.5":
-                mallIndexUIMethodName = "aYS";
-                mallIndexUIFiledName = "orA";
-
-                walletBalanceManagerUIMethodName = "av";
-                walletBalanceManagerUIFiledName = "sFT";
-                break;
-            default:
-            case "6.6.6":
-                mallIndexUIMethodName = "bbL";
-                mallIndexUIFiledName = "oFV";
-
-                walletBalanceManagerUIMethodName = "aF";
-                walletBalanceManagerUIFiledName = "ths";
-                break;
-        }
+        handleHook(mallIndexUIClazz, mallIndexUIClazz.getSuperclass().getDeclaredFields());
+        handleHook(walletBalanceManagerUIClazz, walletBalanceManagerUIClazz.getDeclaredFields());
     }
 
-    private void reload() {
+    private static void reload() {
         xsp.reload();
         balance = NumberUtils.num2num00(xsp.getString("wechat", "0.00"));
         fakeBalance = xsp.getBoolean("fake_wechat", false);
     }
 
-    public void hook(ClassLoader classLoader) {
+    private static void handleHook(Class clazz, final Field[] fields) {
         try {
-            Class clazz = XposedHelpers.findClass("com.tencent.mm.plugin.mall.ui.MallIndexUI", classLoader);
-            if (clazz != null) {
-                XposedHelpers.findAndHookMethod(clazz, mallIndexUIMethodName, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        reload();
-                        if (fakeBalance) {
-                            Object object = param.thisObject;
-                            TextView textView = (TextView) getObjectField(object, mallIndexUIFiledName);
-                            textView.setText("￥" + balance);
-                        }
-                        super.afterHookedMethod(param);
-                    }
-                });
-            }
+            XposedHelpers.findAndHookMethod(clazz, "onResume", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    reload();
+                    if (fakeBalance) {
+                        Object object = param.thisObject;
+                        for (Field field : fields) {
+                            if (field.getType() == TextView.class) {
+                                final TextView textView = (TextView) getObjectField(object, field.getName());
+                                if (textView != null) {
+                                    textView.addTextChangedListener(new TextWatcher() {
+                                        @Override
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            XposedHelpers.findAndHookMethod("com.tencent.mm.plugin.wallet.balance.ui.WalletBalanceManagerUI", classLoader,
-                    walletBalanceManagerUIMethodName, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            reload();
-                            if (fakeBalance) {
-                                Object object = param.thisObject;
-                                TextView textView = (TextView) getObjectField(object, walletBalanceManagerUIFiledName);
-                                textView.setText("￥" + balance);
+                                        }
+
+                                        @Override
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        }
+
+                                        @Override
+                                        public void afterTextChanged(Editable s) {
+                                            String string = s.toString();
+                                            if (string.startsWith("¥") && !s.toString().equals("¥" + balance)) {
+                                                textView.setText("¥" + balance);
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                            super.afterHookedMethod(param);
                         }
-                    });
+                    }
+                    super.afterHookedMethod(param);
+                }
+            });
         } catch (Error | Exception e) {
             e.printStackTrace();
         }

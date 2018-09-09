@@ -26,27 +26,17 @@ public class AliPayHook {
     private static boolean fakeBalance;
     private static String balance;
 
+    private static boolean fakeTts;
+    private static String tts;
+
+    private String ttsClassName;
+
     public AliPayHook(String versionName) {
         xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
         xsp.makeWorldReadable();
         switch (versionName) {
-            case "10.1.0":
-                break;
-            case "10.1.2":
-                break;
-            case "10.1.5":
-                break;
-            case "10.1.8":
-                break;
-            case "10.1.10":
-                break;
-            case "10.1.12":
-                break;
-            case "10.1.15":
-                break;
-            case "10.1.18":
-                break;
-            case "10.1.20":
+            default:
+                ttsClassName = "com.alipay.mobile.rome.pushservice.tts.e";
                 break;
         }
     }
@@ -55,6 +45,8 @@ public class AliPayHook {
         xsp.reload();
         balance = NumberUtils.num2num00WithComma(xsp.getString("alipay", "0.00"));
         fakeBalance = xsp.getBoolean("fake_alipay", false);
+        tts = NumberUtils.num2num00(xsp.getString("alipay_tts", "0.00"));
+        fakeTts = xsp.getBoolean("fake_alipay_tts", false);
     }
 
     public void hook(ClassLoader classLoader) {
@@ -95,6 +87,19 @@ public class AliPayHook {
                             XposedHelpers.callMethod(object, "setMainInfo", balance + " 元");
                         }
                         param.args[0] = object;
+                    }
+                    super.beforeHookedMethod(param);
+                }
+            });
+
+            Class ttsClass = XposedHelpers.findClass(ttsClassName, classLoader);
+            XposedBridge.hookAllConstructors(ttsClass, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    reload();
+                    if (fakeTts) {
+                        param.args[1] = tts;
+                        XposedHelpers.callMethod(param.args[2], "setContent", tts);
                     }
                     super.beforeHookedMethod(param);
                 }

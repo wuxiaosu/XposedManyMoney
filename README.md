@@ -8,6 +8,8 @@ Xposed 修改微信、QQ、TIM、支付宝余额，假装自己很有钱，如�
 ## 下载
 - release from [github](https://github.com/wuxiaosu/XposedManyMoney/releases) 
 - release from [酷安](https://www.coolapk.com/apk/178402) 
+## v1.05  
+增加支付宝收款语音；
 ## v1.04  
 更新支持支付宝 10.1.20；  
 更新支持 QQ 7.5.5、7.5.8；  

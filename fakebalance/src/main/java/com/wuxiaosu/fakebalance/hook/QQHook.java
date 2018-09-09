@@ -20,18 +20,15 @@ public class QQHook {
     private static boolean fakeBalance;
     private static String balance;
 
-    public QQHook(String versionName) {
-        xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
-        xsp.makeWorldReadable();
-    }
-
-    private void reload() {
+    private static void reload() {
         xsp.reload();
         balance = NumberUtils.num2num00(xsp.getString("tenpay", "0.00"));
         fakeBalance = xsp.getBoolean("fake_tenpay", false);
     }
 
-    public void hook(ClassLoader classLoader) {
+    public static void hook(ClassLoader classLoader) {
+        xsp = new XSharedPreferences(BuildConfig.APPLICATION_ID, SettingLabelView.DEFAULT_PREFERENCES_NAME);
+        xsp.makeWorldReadable();
         try {
             Class numAnimClazz = XposedHelpers.findClass("com.tencent.mobileqq.activity.qwallet.widget.NumAnim", classLoader);
             XposedHelpers.findAndHookMethod(numAnimClazz, "run",
